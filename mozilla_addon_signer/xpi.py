@@ -27,6 +27,9 @@ class XPI(object):
     class MissingID(Exception):
         pass
 
+    class InvalidManifest(Exception):
+        pass
+
     def __init__(self, path):
         if not os.path.isfile(path):
             raise XPI.DoesNotExist()
@@ -54,8 +57,11 @@ class XPI(object):
             self.addon_data = install_rdf.RDF.Description
         elif os.path.exists(manifest_path):
             # Web extension
-            with open(manifest_path) as f:
-                manifest = json.loads(f.read())
+            try:
+                with open(manifest_path) as f:
+                    manifest = json.loads(f.read())
+            except json.decoder.JSONDecodeError as e:
+                raise self.InvalidManifest(e)
             self.addon_data = manifest
             try:
                 manifest['applications']['gecko']['id']

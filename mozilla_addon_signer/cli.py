@@ -47,6 +47,9 @@ def load_xpi(fp):
     except XPI.InvalidXPI:
         output('ERROR: `{}` is not a valid web extension.'.format(fp), Fore.RED)
         exit(1)
+    except XPI.InvalidManifest as e:
+        output('ERROR: `{}` has an invalid manifest: {}.'.format(fp, e), Fore.RED)
+        exit(1)
     return xpi
 
 
